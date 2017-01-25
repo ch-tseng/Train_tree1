@@ -1,5 +1,5 @@
-# USAGE
-# python train_and_test.py --dataset 4scenes
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # import the necessary packages
 from __future__ import print_function
@@ -15,17 +15,17 @@ import mahotas
 import cv2
 
 def describe(image):
-	# extract the mean and standard deviation from each channel of the image
-	# in the HSV color space
+        #上面指令是從圖片的HSV色彩模型中，取得其平均值及標準差（有RGB三個channels，因此會各有3組平均值及標準差）作為特徵值
 	(means, stds) = cv2.meanStdDev(cv2.cvtColor(image, cv2.COLOR_BGR2HSV))
+        #進行降維處理：將means及stds各3組array使用concatenate指令合成1組，再予以扁平化（變成一維）。
 	colorStats = np.concatenate([means, stds]).flatten()
 
-	# extract Haralick texture features
+        #將圖片轉為灰階
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #取Haralick紋理特徵(texture features)的平均值
 	haralick = mahotas.features.haralick(gray).mean(axis=0)
 
-	# return a concatenated feature vector of color statistics and Haralick
-	# texture features
+        #使用np.hstack將兩個一維的特徵陣列colorStats及haralick合成一個
 	return np.hstack([colorStats, haralick])
 
 # construct the argument parser and parse the arguments
@@ -61,8 +61,7 @@ for imagePath in imagePaths:
 	np.array(labels), test_size=0.20, random_state=42)
 
 # initialize the model as a decision tree
-#model = DecisionTreeClassifier(criterion='entropy', random_state=84)
-model = SVC(kernel="linear")
+model = DecisionTreeClassifier(criterion='entropy', random_state=84)
 
 # check to see if a Random Forest should be used instead
 if args["forest"] > 0:
