@@ -63,10 +63,6 @@ for imagePath in imagePaths:
 # initialize the model as a decision tree
 model = DecisionTreeClassifier(criterion='entropy', random_state=84)
 
-# check to see if a Random Forest should be used instead
-if args["forest"] > 0:
-	model = RandomForestClassifier(n_estimators=20, random_state=42)
-
 # train the decision tree
 print("[INFO] training model...")
 model.fit(trainData, trainLabels)
